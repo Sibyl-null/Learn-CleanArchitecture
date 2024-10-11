@@ -1,5 +1,6 @@
 using ErrorOr;
 using GymManagement.Application.Subscriptions.Commands.CreateSubscription;
+using GymManagement.Application.Subscriptions.Queries.GetSubscription;
 using GymManagement.Contracts.Subscriptions;
 using GymManagement.Domain.Subscriptions;
 using MediatR;
@@ -29,6 +30,19 @@ public class SubscriptionsController : ControllerBase
 
         return result.MatchFirst(
             subscription => Ok(new SubscriptionResponse(subscription.Id, request.SubscriptionType)),
+            error => Problem());
+    }
+
+    [HttpGet("{subscriptionId:guid}")]
+    public async Task<IActionResult> GetSubscription(Guid subscriptionId)
+    {
+        var query = new GetSubscriptionQuery(subscriptionId);
+        ErrorOr<Subscription> result = await _mediator.Send(query);
+
+        return result.MatchFirst(
+            subscription => Ok(new SubscriptionResponse(
+                subscription.Id,
+                Enum.Parse<SubscriptionType>(subscription.SubscriptionType))),
             error => Problem());
     }
 }
