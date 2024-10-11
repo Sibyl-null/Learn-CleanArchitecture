@@ -8,17 +8,17 @@ namespace GymManagement.Api.Controllers;
 [Route("[controller]")]
 public class SubscriptionsController : ControllerBase
 {
-    private readonly ISubscriptionsService _subscriptionsService;
+    private readonly ISubscriptionsWriteService _subscriptionsWriteService;
 
-    public SubscriptionsController(ISubscriptionsService subscriptionsService)
+    public SubscriptionsController(ISubscriptionsWriteService subscriptionsWriteService)
     {
-        _subscriptionsService = subscriptionsService;
+        _subscriptionsWriteService = subscriptionsWriteService;
     }
 
     [HttpPost]
     public IActionResult CreateSubscription(CreateSubscriptionRequest request)
     {
-        Guid subscriptionId = _subscriptionsService.CreateSubscription(
+        Guid subscriptionId = _subscriptionsWriteService.CreateSubscription(
             request.SubscriptionType.ToString(),
             request.AdminId);
 
