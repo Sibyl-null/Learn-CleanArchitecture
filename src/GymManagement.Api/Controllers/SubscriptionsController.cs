@@ -1,5 +1,6 @@
 using ErrorOr;
 using GymManagement.Application.Subscriptions.Commands.CreateSubscription;
+using GymManagement.Application.Subscriptions.Commands.DeleteSubscription;
 using GymManagement.Application.Subscriptions.Queries.GetSubscription;
 using GymManagement.Contracts.Subscriptions;
 using GymManagement.Domain.Subscriptions;
@@ -52,5 +53,16 @@ public class SubscriptionsController : ControllerBase
                 subscription.Id,
                 Enum.Parse<Contracts.Subscriptions.SubscriptionType>(subscription.SubscriptionType.Name))),
             error => Problem());
+    }
+
+    [HttpDelete("{subscriptionId:guid}")]
+    public async Task<IActionResult> DeleteSubscription(Guid subscriptionId)
+    {
+        var command = new DeleteSubscriptionCommand(subscriptionId);
+        ErrorOr<Success> result = await _mediator.Send(command);
+        
+        return result.Match<IActionResult>(
+            _ => NoContent(),
+            _ => Problem());
     }
 }

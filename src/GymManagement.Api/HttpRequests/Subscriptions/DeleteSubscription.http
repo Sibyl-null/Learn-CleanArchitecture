@@ -1,0 +1,4 @@
+@host =  http://localhost:5147
+@subscriptionId = 56F44C06-1B05-4BCA-9614-872E1BF8A06A
+
+DELETE {{host}}/Subscriptions/{{subscriptionId}}
