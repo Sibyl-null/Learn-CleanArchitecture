@@ -22,8 +22,16 @@ public class SubscriptionsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateSubscription(CreateSubscriptionRequest request)
     {
+        if (!Domain.Subscriptions.SubscriptionType.TryFromName(request.SubscriptionType.ToString(),
+                out var subscriptionType))
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                detail: "Invalid subscription type");
+        }
+        
         var command = new CreateSubscriptionCommand(
-            request.SubscriptionType.ToString(),
+            subscriptionType,
             request.AdminId);
 
         ErrorOr<Subscription> result = await _mediator.Send(command);
@@ -42,7 +50,7 @@ public class SubscriptionsController : ControllerBase
         return result.MatchFirst(
             subscription => Ok(new SubscriptionResponse(
                 subscription.Id,
-                Enum.Parse<SubscriptionType>(subscription.SubscriptionType))),
+                Enum.Parse<Contracts.Subscriptions.SubscriptionType>(subscription.SubscriptionType.Name))),
             error => Problem());
     }
 }

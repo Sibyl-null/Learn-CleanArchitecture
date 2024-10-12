@@ -18,11 +18,9 @@ internal class CreateSubscriptionCommandHandler : IRequestHandler<CreateSubscrip
 
     public async Task<ErrorOr<Subscription>> Handle(CreateSubscriptionCommand request, CancellationToken cancellationToken)
     {
-        Subscription subscription = new Subscription
-        {
-            Id = Guid.NewGuid(),
-            SubscriptionType = request.SubscriptionType,
-        };
+        Subscription subscription = new Subscription(
+            subscriptionType: request.SubscriptionType,
+            adminId: request.AdminId);
 
         await _subscriptionsRepository.AddSubscriptionAsync(subscription);
         await _unitOfWork.CommitChangesAsync();
